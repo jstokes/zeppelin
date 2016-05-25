@@ -15,4 +15,4 @@ RUN wget http://central.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.1/hado
   -o /opt/spark/lib/hadoop-aws-2.7.1.jar
 
 # jar used for redshift driver
-RUN wget https://s3.amazonaws.com/redshift-downloads/drivers/RedshiftJDBC41-1.1.10.1010.jar -o /var/lib/RedshiftJDBC41-1.1.10.1010.jar
+RUN wget https://s3.amazonaws.com/redshift-downloads/drivers/RedshiftJDBC4-1.1.10.1010.jar -o /var/lib/RedshiftJDBC4-1.1.10.1010.jar
