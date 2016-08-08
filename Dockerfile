@@ -2,19 +2,19 @@ FROM mesosphere/zeppelin:0.6.0
 
 MAINTAINER jeffecu88@gmail.com
 
-RUN curl 'http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh' > Miniconda.sh
-RUN bash Miniconda.sh -p /miniconda -b
-RUN rm Miniconda.sh
+# RUN curl 'http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh' > Miniconda.sh
+# RUN bash Miniconda.sh -p /miniconda -b
+# RUN rm Miniconda.sh
 
-ENV PATH=/miniconda/bin:${PATH}
-RUN conda update -y conda
-RUN conda install -y \
-    matplotlib \
-    seaborn \
-    numpy \
-    scikit-learn \
-    bokeh \
-    pandas
+# ENV PATH=/miniconda/bin:${PATH}
+# RUN conda update -y conda
+# RUN conda install -y \
+#     matplotlib \
+#     seaborn \
+#     numpy \
+#     scikit-learn \
+#     bokeh \
+#     pandas
 
 # Redshift libs
 RUN curl https://s3.amazonaws.com/redshift-downloads/drivers/RedshiftJDBC41-1.1.10.1010.jar \
