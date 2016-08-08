@@ -18,6 +18,8 @@ RUN conda install -y \
     bokeh \
     pandas
 
+RUN mkdir -p /opt/spark/lib
+
 # Redshift libs
 RUN curl https://s3.amazonaws.com/redshift-downloads/drivers/RedshiftJDBC41-1.1.10.1010.jar \
   -o /opt/spark/lib/RedshiftJDBC41-1.1.10.1010.jar
