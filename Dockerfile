@@ -1,62 +1,16 @@
 FROM gettyimages/spark:2.0.1-hadoop-2.7
 
-MAINTAINER jeffecu88@gmail.com
+ENV ZEPPELIN_VER  0.6.2
 
-# SciPy
-RUN set -ex \
- && buildDeps=' \
-    libpython3-dev \
-    build-essential \
-    pkg-config \
-    gfortran \
- ' \
- && apt-get update && apt-get install -y --no-install-recommends \
-    $buildDeps \
-    ca-certificates \
-    wget \
-    liblapack-dev \
-    libopenblas-dev \
- && packages=' \
-    numpy \
-    pandasql \
-    scipy \
- ' \
- && pip3 install $packages \
- && apt-get purge -y --auto-remove $buildDeps \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /opt && \
+    cd /opt && \
+    curl http://apache.claz.org/zeppelin/zeppelin-${ZEPPELIN_VER}/zeppelin-${ZEPPELIN_VER}-bin-all.tgz | \
+        tar -zx && \
+    ln -s zeppelin-${ZEPPELIN_VER}-bin-all zeppelin && \
+    echo Zeppelin ${ZEPPELIN_VER} installed in /opt
 
-# Zeppelin
-ENV ZEPPELIN_PORT 8080
-ENV ZEPPELIN_HOME /usr/zeppelin
-ENV ZEPPELIN_CONF_DIR $ZEPPELIN_HOME/conf
-ENV ZEPPELIN_NOTEBOOK_DIR $ZEPPELIN_HOME/notebook
-ENV ZEPPELIN_COMMIT 091086de9400dd1c02ca02acf4180b1bf1e9ede7
-RUN set -ex \
- && buildDeps=' \
-    git \
-    bzip2 \
- ' \
- && apt-get update && apt-get install -y --no-install-recommends $buildDeps \
- && curl -sL http://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz \
-   | gunzip \
-   | tar x -C /tmp/ \
- && git clone https://github.com/apache/zeppelin.git /usr/src/zeppelin \
- && cd /usr/src/zeppelin \
- && git checkout -q $ZEPPELIN_COMMIT \
- && dev/change_scala_version.sh "2.11" \
- && MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=1024m" /tmp/apache-maven-3.3.9/bin/mvn --batch-mode package -DskipTests -Pscala-2.11 -Pbuild-distr \
-  -pl 'zeppelin-interpreter,zeppelin-zengine,zeppelin-display,spark-dependencies,spark,markdown,angular,shell,hbase,postgresql,jdbc,python,elasticsearch,zeppelin-web,zeppelin-server,zeppelin-distribution' \
- && tar xvf /usr/src/zeppelin/zeppelin-distribution/target/zeppelin*.tar.gz -C /usr/ \
- && mv /usr/zeppelin* $ZEPPELIN_HOME \
- && mkdir -p $ZEPPELIN_HOME/logs \
- && mkdir -p $ZEPPELIN_HOME/run \
- && apt-get purge -y --auto-remove $buildDeps \
- && rm -rf /var/lib/apt/lists/* \
- && rm -rf /usr/src/zeppelin \
- && rm -rf /root/.m2 \
- && rm -rf /root/.npm \
- && rm -rf /tmp/*
-
-WORKDIR $ZEPPELIN_HOME
-CMD ["bin/zeppelin.sh"]
+ADD zeppelin-log4j.properties /opt/zeppelin/conf/log4j.properties
+ADD zeppelin-env.sh /opt/zeppelin/conf/zeppelin-env.sh
+ADD docker-zeppelin.sh /opt/zeppelin/bin/docker-zeppelin.sh
+EXPOSE 8080
+ENTRYPOINT ["/opt/zeppelin/bin/docker-zeppelin.sh"]
