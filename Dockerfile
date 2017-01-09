@@ -1,4 +1,4 @@
-FROM gettyimages/spark:2.0.1-hadoop-2.7
+FROM ramhiser/spark:2.0.1
 
 ENV ZEPPELIN_VER  0.6.2
 
